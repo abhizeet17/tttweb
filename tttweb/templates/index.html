@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+    <style>
+        table { border-collapse: collapse; }
+        td { width: 100px; height: 100px; text-align: center; font-size: 24px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <table id="board">
+        <tr>
+            <td data-row="0" data-col="0"></td>
+            <td data-row="0" data-col="1"></td>
+            <td data-row="0" data-col="2"></td>
+        </tr>
+        <tr>
+            <td data-row="1" data-col="0"></td>
+            <td data-row="1" data-col="1"></td>
+            <td data-row="1" data-col="2"></td>
+        </tr>
+        <tr>
+            <td data-row="2" data-col="0"></td>
+            <td data-row="2" data-col="1"></td>
+            <td data-row="2" data-col="2"></td>
+        </tr>
+    </table>
+    <script>
+        document.querySelectorAll('#board td').forEach(cell => {
+            cell.addEventListener('click', function() {
+                const row = this.getAttribute('data-row');
+                const col = this.getAttribute('data-col');
+                fetch('/move', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ row, col, mark: 'X' })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'win') {
+                        alert('Player X wins!');
+                    } else if (data.status === 'draw') {
+                        alert('It\'s a draw!');
+                    } else if (data.status === 'computer_win') {
+                        alert('Computer wins!');
+                    }
+                    updateBoard(data.board);
+                });
+            });
+        });
+
+        function updateBoard(board) {
+            document.querySelectorAll('#board td').forEach(cell => {
+                const row = cell.getAttribute('data-row');
+                const col = cell.getAttribute('data-col');
+                cell.textContent = board[row][col];
+                cell.style.pointerEvents = board[row][col] === '-' ? 'auto' : 'none';
+            });
+        }
+    </script>
+</body>
+</html>
