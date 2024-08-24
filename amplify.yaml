@@ -1,0 +1,10 @@
+version: 1
+applications:
+  - backend:
+      phases:
+        preBuild:
+          commands:
+            - pip install -r requirements.txt
+        build:
+          commands:
+            - python app.py
